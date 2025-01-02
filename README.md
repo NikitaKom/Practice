@@ -63,7 +63,7 @@ pip install googleapiclient
 
 Set up a PostgreSQL database using your parameters in the code
 
-Database Name: [your_dB_name]
+Database Name: [your_db_name]
 
 User: [your_user]
 
@@ -73,7 +73,39 @@ Host: localhost (or any other)
 
 Port: 5432
 
-Use the provided SQL scripts (if any) to initialize the database schema.
+Use the provided SQL scripts to initialize the database schema:
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE collections (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, name)
+);
+
+CREATE TABLE videos (
+    id SERIAL PRIMARY KEY,
+    youtube_id VARCHAR(50) NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    description TEXT,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE collection_videos (
+    id SERIAL PRIMARY KEY,
+    collection_id INTEGER NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+    video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(collection_id, video_id)
+);
+
+
 
 *4. Set API Keys*
 
@@ -85,7 +117,7 @@ Telegram bot token in the main() function.
 
 *5. Run the Bot*
 
-python bot_stable.txt
+python Komelkov.py (rename if you want to)
 
 
 **Usage**
